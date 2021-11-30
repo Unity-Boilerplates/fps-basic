@@ -5,6 +5,29 @@ using UnityEngine;
 public class PlayerMovementScript : MonoBehaviour
 {
 
+    [SerializeField] CharacterController controller;
+    [SerializeField] float speed = 11f;
+    [SerializeField] float gravity = -30f;
+    Vector3 verticalVelocity = Vector3.zero;
+
+    Vector2 horizontalInput;
+
+    private void Update()
+    {
+        Vector3 horizontalVelocity = 
+            (transform.right * horizontalInput.x + transform.forward * horizontalInput.y) * speed;
+        controller.Move(horizontalVelocity * Time.deltaTime);
+        verticalVelocity.y += gravity * Time.deltaTime;
+        controller.Move(verticalVelocity * Time.deltaTime);
+    }
+
+    public void ReceiveInput(Vector2 _horizontalInput)
+    {
+        horizontalInput = _horizontalInput;
+        print(horizontalInput);
+    }
+
+    /*
     public CharacterController controller;
     public float speed = 12f;
     public float gravity = -9.81f;
@@ -18,7 +41,7 @@ public class PlayerMovementScript : MonoBehaviour
 
     void Update()
     {
-
+        
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         if(isGrounded && velocity.y < 0) velocity.y = -2f;
         
@@ -33,5 +56,7 @@ public class PlayerMovementScript : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+        
     }
+    */
 }
