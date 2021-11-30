@@ -354,6 +354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 280035095}
   - component: {fileID: 280035094}
+  - component: {fileID: 280035097}
   - component: {fileID: 280035096}
   m_Layer: 0
   m_Name: First Person Player
@@ -410,14 +411,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 280035094}
-  speed: 12
+  speed: 11
   gravity: -19.62
-  jumpHeight: 3
-  groundCheck: {fileID: 1276863734}
-  groundDistance: 0.4
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  jumpHeight: 3.5
+  groundCheck: {fileID: 1276863734}
+  groundDistance: 0.4
+--- !u!114 &280035097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280035093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aee7a5ab3bc47e84bbf10da27b446273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 280035096}
 --- !u!1 &283115846
 GameObject:
   m_ObjectHideFlags: 0

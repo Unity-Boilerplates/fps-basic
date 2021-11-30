@@ -8,15 +8,34 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField] CharacterController controller;
     [SerializeField] float speed = 11f;
     [SerializeField] float gravity = -30f;
-    Vector3 verticalVelocity = Vector3.zero;
+    [SerializeField] LayerMask groundMask;
+    [SerializeField] float jumpHeight = 3.5f;
 
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+
+
+    bool jump;
+
+    Vector3 verticalVelocity = Vector3.zero;
     Vector2 horizontalInput;
+    bool isGrounded;
 
     private void Update()
     {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        if (isGrounded && verticalVelocity.y < 0) verticalVelocity.y = 0;
+
         Vector3 horizontalVelocity = 
             (transform.right * horizontalInput.x + transform.forward * horizontalInput.y) * speed;
         controller.Move(horizontalVelocity * Time.deltaTime);
+
+        if (this.jump){
+            if (isGrounded)
+                verticalVelocity.y = Mathf.Sqrt(-2f * jumpHeight * gravity);
+            this.jump = false;
+        }
+
         verticalVelocity.y += gravity * Time.deltaTime;
         controller.Move(verticalVelocity * Time.deltaTime);
     }
@@ -24,7 +43,13 @@ public class PlayerMovementScript : MonoBehaviour
     public void ReceiveInput(Vector2 _horizontalInput)
     {
         horizontalInput = _horizontalInput;
-        print(horizontalInput);
+    }
+
+    public void OnJumpPressed()
+    {
+        this.jump = true;
+        
+
     }
 
     /*
