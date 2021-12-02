@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovementScript : MonoBehaviour
+#pragma warning disable 649
 {
 
     [SerializeField] CharacterController controller;

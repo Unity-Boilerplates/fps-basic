@@ -16,10 +16,16 @@ public class MouseLook : MonoBehaviour
 
     float mouseX, mouseY;
 
+
     public void ReceiveInput(Vector2 mouseInput)
     {
         mouseX = mouseInput.x * sensitivityX;
         mouseY = mouseInput.y * sensitivityY;
+    }
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+
     }
 
     private void Update()
