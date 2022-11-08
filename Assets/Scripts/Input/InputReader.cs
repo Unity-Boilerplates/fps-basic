@@ -12,9 +12,13 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
 	// Gameplay
 	public event UnityAction fireEvent = delegate { };
 	public event UnityAction<Vector2> moveEvent = delegate { };
-	public event UnityAction<Vector2, bool> lookEvent = delegate { };
+	public event UnityAction<Vector2> lookEvent = delegate { };
+	public event UnityAction jumpEvent = delegate { };
+	public event UnityAction jumpCanceledEvent = delegate { };
 	public event UnityAction enableMouseControlCameraEvent = delegate { };
 	public event UnityAction disableMouseControlCameraEvent = delegate { };
+
+
 
 	
 
@@ -44,21 +48,29 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
 	}
 
 
+	public void OnJump(InputAction.CallbackContext context)
+	{
+		if (context.phase == InputActionPhase.Performed)
+			jumpEvent.Invoke();
+
+		if (context.phase == InputActionPhase.Canceled)
+			jumpCanceledEvent.Invoke();
+	}
 
 	public void OnMove(InputAction.CallbackContext context)
 	{
 		moveEvent.Invoke(context.ReadValue<Vector2>());
 	}
 
+
 	
 
 	public void OnLook(InputAction.CallbackContext context)
 	{
-		lookEvent.Invoke(context.ReadValue<Vector2>(), IsDeviceMouse(context));
+		lookEvent.Invoke(context.ReadValue<Vector2>());
 	}
 
 	
-	private bool IsDeviceMouse(InputAction.CallbackContext context) => context.control.device.name == "Mouse";
 
 	
 	
@@ -74,5 +86,4 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
 		gameInput.Player.Disable();
 	}
 
-	public bool LeftMouseDown() => Mouse.current.leftButton.isPressed;
 }

@@ -1,6 +1,9 @@
-# Template
+# FPS Template
 
 
+## Description
+
+This project makes use of Unity Events with a Scriptable Object to get the input. No need to attatch to a GameObject, as this gets Scene Independence.
 ## Packages
 
 External tools/Quality of life tools
