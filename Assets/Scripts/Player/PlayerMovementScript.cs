@@ -12,6 +12,7 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField] float speed = 12f;
     [SerializeField] float gravity = -9.81f;
     [SerializeField] float jumpHeight = 3f;
+    [SerializeField] float jumpForce = 1.5f;
     [SerializeField] Transform groundCheck;
     [SerializeField] float groundDistance = 0.4f;
     [SerializeField] LayerMask groundMask;
@@ -19,55 +20,96 @@ public class PlayerMovementScript : MonoBehaviour
     Vector3 velocity;
     bool isGrounded;
     Vector2 movementInput;
-    bool JumpInput;
+    bool jumping;
+    bool crouching;
+    float currentHeight;
 
 
     private void OnEnable()
     {
-        inputReader.moveEvent += OnUpdatePosition;
-        inputReader.fireEvent += OnFire;
-        inputReader.jumpEvent += OnJumpInitiated;
-        inputReader.jumpCanceledEvent += OnJumpCancelled;
+        this.inputReader.moveEvent += OnUpdatePosition;
+        this.inputReader.fireEvent += OnFire;
+        this.inputReader.jumpEvent += OnJumpInitiated;
+        this.inputReader.jumpCanceledEvent += OnJumpCancelled;
+        this.inputReader.crouchEvent += OnCrouch;
+        this.inputReader.crouchEventCancelled += OnCrouchCancelled;
 
+    }
+
+     void Start()
+    {
+        this.currentHeight = 0f;
     }
 
     void Update()
     {
-        handleMovement();
-        handleGravity();
+        this.movementHandler();
+        this.gravityHandler();
     }
 
-    void handleMovement()
+    void movementHandler()
     { 
-        Vector3 move = transform.right * movementInput.x + transform.forward * movementInput.y;
-        controller.Move(move * speed * Time.deltaTime);
+        Vector3 move = transform.right * this.movementInput.x + transform.forward * this.movementInput.y;
+        this.controller.Move(move * this.speed * Time.deltaTime);
 
         
     }
 
-    void handleGravity()
+    void gravityHandler()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        if (isGrounded && velocity.y < 0) velocity.y = -2f;
+        performGroundedActions();
+        if (this.jumping && this.currentHeight < this.jumpHeight) this.performJump();
+        else this.cancelJump();
+        this.controller.Move(velocity * Time.deltaTime);
 
-        if (this.JumpInput && isGrounded) velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+    }
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+    void cancelJump()
+    {
+        if (!this.checkIfGrounded() && this.currentHeight <= this.jumpHeight)
+            this.currentHeight = this.jumpHeight;
+        this.velocity.y += this.gravity * Time.deltaTime;
+    }
+
+    void performJump()
+    {
+        this.currentHeight += this.jumpForce * Time.deltaTime;
+        this.velocity.y = Mathf.Sqrt(this.currentHeight * -2f * this.gravity);
+    }
+
+    void performGroundedActions()
+    {
+        if (this.checkIfGrounded() && !this.jumping) this.currentHeight = 0f;
+        if (this.checkIfGrounded() && this.velocity.y < 0) this.velocity.y = -2f;
+    }
+
+    bool checkIfGrounded()
+    {
+        return Physics.CheckSphere(this.groundCheck.position, this.groundDistance, this.groundMask);
     }
 
     void OnJumpInitiated()
     {
-        // TODO: Make jump height proportional to jump input time
-        this.JumpInput = true;
+        this.jumping = true;
     }
 
     void OnJumpCancelled()
     {
-        // TODO: Make jump height proportional to jump input time
-        this.JumpInput = false;
+        this.jumping = false;
     }
 
+    void OnCrouch()
+    {
+        this.crouching = true;
+        this.transform.localScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y / 2, this.transform.localScale.z);
+    }
+
+    void OnCrouchCancelled()
+    {
+        this.crouching = false;
+        this.transform.localScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y * 2, this.transform.localScale.z);
+
+    }
     void OnFire()
     {
         this.Log("Firing!");
@@ -75,6 +117,6 @@ public class PlayerMovementScript : MonoBehaviour
 
     void OnUpdatePosition(Vector2 movement)
     {
-        movementInput = movement;
+        this.movementInput = movement;
     }
 }

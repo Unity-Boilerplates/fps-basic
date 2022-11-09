@@ -15,6 +15,8 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
 	public event UnityAction<Vector2> lookEvent = delegate { };
 	public event UnityAction jumpEvent = delegate { };
 	public event UnityAction jumpCanceledEvent = delegate { };
+	public event UnityAction crouchEvent = delegate { };
+	public event UnityAction crouchEventCancelled = delegate { };
 	public event UnityAction enableMouseControlCameraEvent = delegate { };
 	public event UnityAction disableMouseControlCameraEvent = delegate { };
 
@@ -55,6 +57,15 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
 
 		if (context.phase == InputActionPhase.Canceled)
 			jumpCanceledEvent.Invoke();
+	}
+
+	public void OnCrouch(InputAction.CallbackContext context)
+	{
+		if (context.phase == InputActionPhase.Performed)
+			crouchEvent.Invoke();
+
+		if (context.phase == InputActionPhase.Canceled)
+			crouchEventCancelled.Invoke();
 	}
 
 	public void OnMove(InputAction.CallbackContext context)
