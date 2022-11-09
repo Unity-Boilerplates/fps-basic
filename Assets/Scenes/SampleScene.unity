@@ -420,6 +420,7 @@ MonoBehaviour:
   speed: 12
   gravity: -19.62
   jumpHeight: 3
+  jumpForce: 25
   groundCheck: {fileID: 1276863734}
   groundDistance: 0.4
   groundMask:
